@@ -1,0 +1,45 @@
+# Ignore build output directories
+/target/
+/build/
+
+# Ignore Maven-specific files
+/.mvn/
+/.mvnw
+/mvnw.cmd
+
+# Ignore IDE-specific files
+.classpath
+.project
+/.settings/
+
+# Ignore temporary files
+*.log
+*.tmp
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore IntelliJ IDEA specific files
+.idea
+*.iml
+*.iws
+*.ipr
+
+# Ignore Eclipse specific files
+.metadata
+*.classpath
+*.project
+*.settings/
+
+# Ignore NetBeans specific files
+nbproject/private/
+
+# Ignore Visual Studio Code specific files
+.vscode/
+
+# Ignore node modules
+node_modules/
+
+# Ignore the application.properties file
+src/main/resources/application.properties
