@@ -25,7 +25,7 @@ public class DeviceController {
 	@Autowired
 	private SnmpFetcher snmpFetcher;
 	
-    @GetMapping
+    @GetMapping("/register")
     public String handleRequest(HttpServletRequest request) throws UnknownHostException, NotSameNetworkException, MacAddressNotFoundException, IOException {
         String ipAddress = request.getRemoteAddr();
         ResponseEvent<UdpAddress> response = snmpFetcher.fetchSnmpData();

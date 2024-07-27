@@ -43,3 +43,5 @@ node_modules/
 
 # Ignore the application.properties file
 src/main/resources/application.properties
+
+keystore.p12
