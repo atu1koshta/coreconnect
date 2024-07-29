@@ -1,14 +1,13 @@
 package com.unemployed.coreconnect.config;
 
-import java.net.Inet4Address;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.snmp4j.event.ResponseEvent;
-import org.snmp4j.smi.IpAddress;
 import org.snmp4j.smi.UdpAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.util.Pair;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -24,6 +23,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import com.unemployed.coreconnect.constant.Constant;
@@ -41,7 +41,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Autowired
 	private DeviceService deviceService;
 
-	private AtomicInteger connectionCount = new AtomicInteger(0);
+	private ConcurrentHashMap<String, String> onlineUsers = new ConcurrentHashMap<>();
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -51,7 +51,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			@Override
 			public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
 					WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-				connectionCount.incrementAndGet();
 
 				String ipAddress = request.getRemoteAddress().getAddress().toString().substring(1);
 				if (ipAddress.equals(Constant.Network.LOCAL_IPV6)) {
@@ -63,6 +62,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 				Pair<Boolean, String> result = deviceService.checkAndRegisterDevice(macAddress);
 				attributes.put("deviceName", result.getSecond());
+				attributes.put("ipAddress", ipAddress);
+				
+				if (result.getFirst()) {
+                    onlineUsers.put(ipAddress, result.getSecond());
+                }
 
 				return result.getFirst();
 			}
@@ -70,7 +74,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			@Override
 			public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
 					WebSocketHandler wsHandler, Exception exception) {
-				connectionCount.decrementAndGet();
+				return;
 			}
 
 		});
@@ -92,7 +96,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				return new WebSocketHandlerDecorator(handler) {
 					@Override
 					public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-						connectionCount.incrementAndGet();
 						String deviceName = (String) session.getAttributes().get("deviceName");
 						System.out.println("Welcome " + deviceName);
 
@@ -102,17 +105,29 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 					@Override
 					public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus)
 							throws Exception {
-						connectionCount.decrementAndGet();
 						super.afterConnectionClosed(session, closeStatus);
 					}
 				};
 			}
 		});
 	}
+	
+	@EventListener
+	public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        ConcurrentHashMap<String, String> simpSessionAttributes =  (ConcurrentHashMap<String, String>) event.getMessage().getHeaders().get("simpSessionAttributes");
+        String disconnectedIpAddress = simpSessionAttributes.get("ipAddress");
+        onlineUsers.remove(disconnectedIpAddress);
+        
+    }
 
-	@Scheduled(fixedRate = 10000)
-	public void reportCurrentTime() {
-		System.out.println("Number of alive WebSocket connections: " + connectionCount.get());
+    public ConcurrentHashMap<String, String> getOnlineUsers() {
+        return onlineUsers;
+    }
+    
+    @Scheduled(fixedRate = 50000)
+	public void printOnlineUsers() {
+		System.out.println("Online users: \n" + onlineUsers);
+		System.out.println();
 	}
-
+    
 }
