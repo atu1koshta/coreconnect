@@ -30,7 +30,7 @@ public class DeviceService {
 			device = new Device(macAddress);
 			device = saveDevice(device);
 			if(device != null) {
-				return Pair.of(true, String.format("Welcome + %s", device.getDeviceName()));
+				return Pair.of(true, device.getDeviceName());
 			}
 			return Pair.of(false, "Device registration failed.");
 		}
