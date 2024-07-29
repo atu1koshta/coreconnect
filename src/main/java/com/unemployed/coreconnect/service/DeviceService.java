@@ -1,7 +1,6 @@
 package com.unemployed.coreconnect.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import com.unemployed.coreconnect.model.Device;
@@ -21,18 +20,18 @@ public class DeviceService {
 		return deviceRepository.findByMacAddress(macAddress);
 	}
 
-	public Pair<Boolean, String> checkAndRegisterDevice(String macAddress) {
+	public Device checkAndRegisterDevice(String macAddress) {
 		Device device = getDevice(macAddress);
 		
 		if (device != null) {
-			return Pair.of(true, device.getDeviceName());
+			return device;
 		} else {
 			device = new Device(macAddress);
 			device = saveDevice(device);
 			if(device != null) {
-				return Pair.of(true, device.getDeviceName());
+				return device;
 			}
-			return Pair.of(false, "Device registration failed.");
+			return null;
 		}
 	}
 }

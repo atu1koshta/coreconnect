@@ -1,30 +1,87 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Chat WebSocket</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
 	<script type="text/javascript">
 		var stompClient = null;
+		var heartbeatInterval;
 
 		function setConnected(connected) {
-			document.getElementById('connect').disabled = connected;
-			document.getElementById('disconnect').disabled = !connected;
-			document.getElementById('conversationDiv').style.visibility
-				= connected ? 'visible' : 'hidden';
-			document.getElementById('response').innerHTML = '';
+			document.getElementById("connect").disabled = connected;
+			document.getElementById("disconnect").disabled = !connected;
+			document.getElementById("conversationDiv").style.visibility = connected
+				? "visible"
+				: "hidden";
+			document.getElementById("response").innerHTML = "";
 		}
 
 		function connect() {
-			var socket = new SockJS('/chat');
+			var socket = new SockJS("/chat");
 			stompClient = Stomp.over(socket);
 			stompClient.connect({}, function (frame) {
 				setConnected(true);
-				console.log('Connected: ' + frame);
-				stompClient.subscribe('/topic/messages', function (messageOutput) {
+				console.log("Connected: " + frame);
+				stompClient.subscribe("/topic/messages", function (messageOutput) {
 					showMessageOutput(JSON.parse(messageOutput.body));
 				});
+				stompClient.subscribe(
+					"/topic/online-devices",
+					function (messageOutput) {
+						updateOnlineDevices(JSON.parse(messageOutput.body));
+					}
+				);
+
+				// Start sending heartbeat messages
+				heartbeatInterval = setInterval(sendHeartbeat, 30000); // Send heartbeat every 30 seconds
 			});
+		}
+
+		function sendMessage() {
+			var content = document.getElementById("content").value;
+			stompClient.send(
+				"/app/chat",
+				{},
+				JSON.stringify({content: content})
+			);
+		}
+
+		function showMessageOutput(messageOutput) {
+			var response = document.getElementById("response");
+			var p = document.createElement("p");
+			p.style.wordWrap = "break-word";
+			p.appendChild(
+				document.createTextNode(
+					messageOutput.sender +
+					" [" +
+					messageOutput.time +
+					"]: " +
+					messageOutput.message
+				)
+			);
+			response.appendChild(p);
+		}
+
+		function updateOnlineDevices(devices) {
+			var onlineDevicesList = document.getElementById("onlineDevicesList");
+			onlineDevicesList.innerHTML = "";
+
+			for (var key in devices) {
+				console.log("KEY", devices[key]);
+				var deviceElement = document.createElement("li");
+				deviceElement.appendChild(
+					document.createTextNode(devices[key].ipAddress + " - " + devices[key].deviceName)
+				);
+				onlineDevicesList.appendChild(deviceElement);
+			}
+		}
+
+		function sendHeartbeat() {
+			if (stompClient != null && stompClient.connected) {
+				stompClient.send("/app/heartbeat", {}, "")
+			}
 		}
 
 		function disconnect() {
@@ -33,21 +90,8 @@
 			}
 			setConnected(false);
 			console.log("Disconnected");
-		}
 
-		function sendMessage() {
-			var sender = document.getElementById('sender').value;
-			var content = document.getElementById('content').value;
-			stompClient.send("/app/chat", {},
-				JSON.stringify({'sender': sender, 'content': content}));
-		}
-
-		function showMessageOutput(messageOutput) {
-			var response = document.getElementById('response');
-			var p = document.createElement('p');
-			p.style.wordWrap = 'break-word';
-			p.appendChild(document.createTextNode(messageOutput.sender + " [" + messageOutput.time + "]: " + messageOutput.message));
-			response.appendChild(p);
+			clearInterval(heartbeatInterval);
 		}
 	</script>
 </head>
@@ -55,23 +99,22 @@
 <body onload="disconnect()">
 	<div>
 		<div>
-			<input type="text" id="sender" placeholder="Choose a nickname" />
-		</div>
-		<br />
-		<div>
 			<button id="connect" onclick="connect();">Connect</button>
 			<button id="disconnect" disabled="disabled" onclick="disconnect();">
 				Disconnect
 			</button>
 		</div>
 		<br />
+		<div id="onlineDevices">
+			<h2>Online Devices</h2>
+			<ul id="onlineDevicesList"></ul>
+		</div>
 		<div id="conversationDiv">
 			<input type="text" id="content" placeholder="Write a message..." />
 			<button id="sendMessage" onclick="sendMessage();">Send</button>
 			<p id="response"></p>
 		</div>
 	</div>
-
 </body>
 
 </html>
