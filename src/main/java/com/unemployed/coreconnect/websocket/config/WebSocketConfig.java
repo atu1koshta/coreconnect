@@ -43,15 +43,15 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureMessageBroker(@NonNull MessageBrokerRegistry registry) {
 		// TODO Auto-generated method stub
-		registry.enableSimpleBroker("/topic", "/queue");
-		registry.setApplicationDestinationPrefixes("/app");
-		registry.setUserDestinationPrefix("/user");
+		registry.enableSimpleBroker(Constant.WebSocket.TOPIC, Constant.WebSocket.QUEUE);
+		registry.setApplicationDestinationPrefixes(Constant.WebSocket.APP);
+		registry.setUserDestinationPrefix(Constant.WebSocket.USER);
 	}
 
 	@Override
 	public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
-		registry.addEndpoint("chat");
-		registry.addEndpoint("/chat").withSockJS().setInterceptors(new HandshakeInterceptor() {
+		registry.addEndpoint(Constant.WebSocket.CHAT).setAllowedOrigins("*");
+		registry.addEndpoint(Constant.WebSocket.CHAT).withSockJS().setInterceptors(new HandshakeInterceptor() {
 
 			@Override
 			public boolean beforeHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,

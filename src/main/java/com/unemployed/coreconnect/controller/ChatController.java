@@ -5,13 +5,14 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.WebSocketSession;
 
+import com.unemployed.coreconnect.constant.Constant;
 import com.unemployed.coreconnect.model.Message;
 import com.unemployed.coreconnect.model.ServerResponseMessage;
 
 @Controller
 public class ChatController {
-	@MessageMapping("/chat")
-	@SendTo("/topic/messages")
+	@MessageMapping(Constant.WebSocket.CHAT)
+	@SendTo(Constant.WebSocket.MESSAGES)
 	public ServerResponseMessage send(Message message, WebSocketSession session) throws Exception {
 		String deviceName = (String) session.getAttributes().get("deviceName");
 		return new ServerResponseMessage(deviceName, message.getContent());

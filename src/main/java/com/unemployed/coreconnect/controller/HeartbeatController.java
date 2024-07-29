@@ -7,6 +7,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 
+import com.unemployed.coreconnect.constant.Constant;
 import com.unemployed.coreconnect.model.DeviceInfo;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +21,7 @@ public class HeartbeatController {
     private ConcurrentMap<String, DeviceInfo> onlineDevices = new ConcurrentHashMap<>();
 
     @SuppressWarnings("null")
-	@MessageMapping("/heartbeat")
+	@MessageMapping(Constant.WebSocket.HEARTBEAT)
     public void receiveHeartbeat(SimpMessageHeaderAccessor headerAccessor) {
     	System.out.println("Received heartbeat...");
     	if (headerAccessor.getSessionAttributes() != null) {
@@ -40,7 +41,7 @@ public class HeartbeatController {
     }
 
 
-    @Scheduled(fixedRate = 10000) // Check every 10 seconds
+    @Scheduled(fixedRate = Constant.WebSocket.HEARTBEAT_INTERVAL) // Check every 10 seconds
     public void checkHeartbeats() {
     	System.out.println("Checking heartbeats...");
     	long currentTimeMillis = System.currentTimeMillis();
@@ -55,6 +56,6 @@ public class HeartbeatController {
     }
 
     private void broadcastOnlineDevices() {
-        messagingTemplate.convertAndSend("/topic/online-devices", onlineDevices.values());
+        messagingTemplate.convertAndSend(Constant.WebSocket.ONLINE_DEVICES, onlineDevices.values());
     }
 }
