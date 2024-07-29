@@ -12,6 +12,6 @@ public class ChatController {
 	@MessageMapping("/chat")
 	@SendTo("/topic/messages")
 	public ServerResponseMessage send(Message message) throws Exception {
-		return new ServerResponseMessage();
+		return new ServerResponseMessage(message.getSender(), message.getContent());
 	}
 }

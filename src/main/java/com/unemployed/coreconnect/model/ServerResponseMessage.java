@@ -4,11 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ServerResponseMessage {
+	private String sender;
 	private String message;
 	private String time;
 
-	public ServerResponseMessage() {
-		this.message = "Server: ACK at ";
+	public ServerResponseMessage(String sender, String content) {
+		this.sender = sender;
+		this.message = content;
 		this.time = new SimpleDateFormat("HH:mm").format(new Date());
 	}
 
@@ -26,6 +28,14 @@ public class ServerResponseMessage {
 
 	public void setTime(String time) {
 		this.time = time;
+	}
+
+	public String getSender() {
+		return sender;
+	}
+
+	public void setSender(String sender) {
+		this.sender = sender;
 	}
 
 }

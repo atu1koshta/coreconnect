@@ -46,7 +46,7 @@
 			var response = document.getElementById('response');
 			var p = document.createElement('p');
 			p.style.wordWrap = 'break-word';
-			p.appendChild(document.createTextNode(messageOutput.message + messageOutput.time));
+			p.appendChild(document.createTextNode(messageOutput.sender + " [" + messageOutput.time + "]: " + messageOutput.message));
 			response.appendChild(p);
 		}
 	</script>

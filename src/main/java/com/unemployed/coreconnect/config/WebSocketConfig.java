@@ -26,6 +26,7 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import com.unemployed.coreconnect.constant.Constant;
 import com.unemployed.coreconnect.service.DeviceService;
 import com.unemployed.coreconnect.service.NetworkService;
 import com.unemployed.coreconnect.service.SnmpFetcher;
@@ -53,7 +54,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				connectionCount.incrementAndGet();
 
 				String ipAddress = request.getRemoteAddress().getAddress().toString().substring(1);
-				if (ipAddress.equals("0:0:0:0:0:0:0:1")) {
+				if (ipAddress.equals(Constant.Network.LOCAL_IPV6)) {
 					ipAddress = NetworkService.getHostLocalIp();
 				}
 
