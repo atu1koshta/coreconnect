@@ -3,7 +3,11 @@ package com.unemployed.coreconnect.config;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.snmp4j.event.ResponseEvent;
+import org.snmp4j.smi.UdpAddress;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.util.Pair;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -20,15 +24,23 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import com.unemployed.coreconnect.service.DeviceService;
+import com.unemployed.coreconnect.service.SnmpFetcher;
+
 @Configuration
 @EnableWebSocketMessageBroker
 @EnableScheduling
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+	@Autowired
+	private SnmpFetcher snmpFetcher;
+	
+	@Autowired
+	private DeviceService deviceService;
+	
 	private AtomicInteger connectionCount = new AtomicInteger(0);
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		// TODO Auto-generated method stub
 		registry.addEndpoint("chat");
 		registry.addEndpoint("/chat").withSockJS().setInterceptors(new HandshakeInterceptor() {
 
@@ -36,15 +48,24 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
 					WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
 				connectionCount.incrementAndGet();
-				return true;
+				
+				String ipAddress = request.getRemoteAddress().getAddress().toString();
+				ResponseEvent<UdpAddress> responseEvent = snmpFetcher.fetchSnmpData();
+				String macAddress = snmpFetcher.getMacAddressForIp(responseEvent, ipAddress.substring(1));
+				
+				Pair<Boolean, String> result = deviceService.checkAndRegisterDevice(macAddress);
+				attributes.put("deviceName" , result.getSecond());
+				
+				return result.getFirst();
 			}
 
 			@Override
 			public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response,
 					WebSocketHandler wsHandler, Exception exception) {
 				connectionCount.decrementAndGet();
-
 			}
+			
+			
 		});
 	}
 
@@ -64,6 +85,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 					@Override
 					public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 						connectionCount.incrementAndGet();
+						String deviceName = (String) session.getAttributes().get("deviceName");
+						System.out.println("Welcome " + deviceName);
+						
 						super.afterConnectionEstablished(session);
 					}
 
