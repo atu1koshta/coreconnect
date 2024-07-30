@@ -1,97 +1,110 @@
-var stompClient = null;
-var heartbeatInterval;
+(function() {
+	const HEARTBEAT_INTERVAL = 30000;
+	let stompClient = null;
+	let heartbeatInterval;
+	let sessionId = localStorage.getItem('sessionId');
 
-function setConnected(connected) {
-	document.getElementById("connect").disabled = connected;
-	document.getElementById("disconnect").disabled = !connected;
-	document.getElementById("conversationDiv").style.visibility = connected
-		? "visible"
-		: "hidden";
-	document.getElementById("response").innerHTML = "";
-}
+	const setConnected = (connected) => {
+		document.getElementById("connect").disabled = connected;
+		document.getElementById("disconnect").disabled = !connected;
+		document.getElementById("conversationDiv").style.visibility = connected ? "visible" : "hidden";
+		document.getElementById("response").innerHTML = "";
+	};
 
-function connect() {
-	var socket = new SockJS("/chat");
-	stompClient = Stomp.over(socket);
-	stompClient.connect({}, function(frame) {
-		setConnected(true);
-		console.log("Connected: " + frame);
-		stompClient.subscribe("/topic/messages", function(messageOutput) {
-			showMessageOutput(JSON.parse(messageOutput.body));
-		});
-		stompClient.subscribe(
-			"/topic/online-devices",
-			function(messageOutput) {
+	const connect = () => {
+		const socket = new SockJS("/chat");
+		stompClient = Stomp.over(socket);
+
+		stompClient.connect({}, (frame) => {
+			sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
+			localStorage.setItem("sessionId", sessionId);
+
+			setConnected(true);
+			console.log("Connected: " + frame);
+
+			stompClient.subscribe("/topic/messages", (messageOutput) => {
+				showMessageOutput(JSON.parse(messageOutput.body));
+			});
+			stompClient.subscribe("/topic/online-devices", (messageOutput) => {
 				updateOnlineDevices(JSON.parse(messageOutput.body));
+			});
+
+			heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
+		}, (error) => {
+			console.error('Connection error', error);
+			setConnected(false);
+		});
+	};
+
+	const sendMessage = () => {
+		const content = document.getElementById("content").value;
+		if (stompClient && stompClient.connected) {
+			stompClient.send("/app/chat", {}, content);
+		} else {
+			console.warn('Connection is not established. Message not sent.');
+		}
+	};
+
+	const showMessageOutput = (messageOutput) => {
+		const response = document.getElementById("response");
+		const p = document.createElement("p");
+		p.style.wordWrap = "break-word";
+		p.appendChild(
+			document.createTextNode(`${messageOutput.sender} [${messageOutput.time}]: ${messageOutput.message}`)
+		);
+		response.appendChild(p);
+		response.scrollTop = response.scrollHeight;
+	};
+
+	const updateOnlineDevices = (devices) => {
+		const onlineDevicesList = document.getElementById("onlineDevicesList");
+		onlineDevicesList.innerHTML = "";
+
+		for (const key in devices) {
+			if (devices.hasOwnProperty(key)) {
+				const deviceElement = document.createElement("li");
+				deviceElement.className = "list-group-item";
+				deviceElement.appendChild(
+					document.createTextNode(`${devices[key].ipAddress} - ${devices[key].deviceName}`)
+				);
+				onlineDevicesList.appendChild(deviceElement);
 			}
-		);
+		}
+	};
 
-		// Start sending heartbeat messages
-		heartbeatInterval = setInterval(sendHeartbeat, 30000); // Send heartbeat every 30 seconds
+	const sendHeartbeat = () => {
+		if (stompClient && stompClient.connected) {
+			stompClient.send("/app/heartbeat", {}, "");
+		}
+	};
+
+	const disconnect = () => {
+		if (stompClient) {
+			stompClient.disconnect(() => {
+				setConnected(false);
+				console.log("Disconnected");
+				clearInterval(heartbeatInterval);
+				localStorage.removeItem("sessionId");
+			});
+		}
+	};
+
+	const toggleOnlineDevices = () => {
+		const onlineDevices = document.getElementById("onlineDevices");
+		onlineDevices.style.display = (onlineDevices.style.display === "none") ? "block" : "none";
+	};
+
+	document.addEventListener("DOMContentLoaded", () => {
+		sessionId = localStorage.getItem('sessionId');
+		if (sessionId) {
+			console.log("SESSION EXISTS: " + sessionId);
+			connect();
+		}
 	});
-}
 
-function sendMessage() {
-	var content = document.getElementById("content").value;
-	stompClient.send(
-		"/app/chat",
-		{},
-		content);
-}
-
-function showMessageOutput(messageOutput) {
-	var response = document.getElementById("response");
-	var p = document.createElement("p");
-	p.style.wordWrap = "break-word";
-	p.appendChild(
-		document.createTextNode(
-			messageOutput.sender +
-			" [" +
-			messageOutput.time +
-			"]: " +
-			messageOutput.message
-		)
-	);
-	response.appendChild(p);
-
-	response.scrollTop = response.scrollHeight;
-}
-
-function updateOnlineDevices(devices) {
-	var onlineDevicesList = document.getElementById("onlineDevicesList");
-	onlineDevicesList.innerHTML = "";
-
-	for (var key in devices) {
-		var deviceElement = document.createElement("li");
-		deviceElement.className = "list-group-item";
-		deviceElement.appendChild(
-			document.createTextNode(devices[key].ipAddress + " - " + devices[key].deviceName)
-		);
-		onlineDevicesList.appendChild(deviceElement);
-	}
-}
-
-function sendHeartbeat() {
-	if (stompClient != null && stompClient.connected) {
-		stompClient.send("/app/heartbeat", {}, "")
-	}
-}
-
-function disconnect() {
-	if (stompClient != null) {
-		stompClient.disconnect();
-	}
-	setConnected(false);
-	console.log("Disconnected");
-
-	clearInterval(heartbeatInterval);
-}
-
-function toggleOnlineDevices() {
-	var onlineDevices = document.getElementById("onlineDevices");
-	if (onlineDevices.style.display === "none") {
-		onlineDevices.style.display = "block";
-	} else {
-		onlineDevices.style.display = "none";
-	}
-}
+	// Export functions to global scope for buttons to access
+	window.connect = connect;
+	window.sendMessage = sendMessage;
+	window.disconnect = disconnect;
+	window.toggleOnlineDevices = toggleOnlineDevices;
+})();
