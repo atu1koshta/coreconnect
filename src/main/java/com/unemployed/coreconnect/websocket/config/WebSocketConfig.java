@@ -31,7 +31,6 @@ import com.unemployed.coreconnect.service.SnmpFetcher;
 
 @Configuration
 @EnableWebSocketMessageBroker
-@EnableScheduling
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Autowired
 	private SnmpFetcher snmpFetcher;
