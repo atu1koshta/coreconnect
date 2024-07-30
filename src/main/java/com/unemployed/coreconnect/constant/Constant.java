@@ -16,5 +16,6 @@ public class Constant {
 		public static final String HEARTBEAT = "/heartbeat";
 		
 		public static final int HEARTBEAT_INTERVAL = 10000;
+		public static final int DEVICE_OFFLINE_THRESHOLD = 30000;
 	}
 }

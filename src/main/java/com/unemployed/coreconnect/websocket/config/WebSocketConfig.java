@@ -38,7 +38,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Autowired
 	private DeviceService deviceService;
-	
 
 	@Override
 	public void configureMessageBroker(@NonNull MessageBrokerRegistry registry) {
@@ -69,7 +68,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				if (device == null) {
 					return false;
 				}
-				
+
 				attributes.put("deviceName", device.getDeviceName());
 				attributes.put("ipAddress", ipAddress);
 				attributes.put("macAddress", macAddress);
@@ -81,7 +80,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 			public void afterHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
 					@NonNull WebSocketHandler wsHandler, @Nullable Exception exception) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 		});
@@ -98,18 +97,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 						String deviceIpAddress = (String) session.getAttributes().get("ipAddress");
 						String deviceName = (String) session.getAttributes().get("deviceName");
 						System.out.println("Device connected: " + deviceName + " with IP: " + deviceIpAddress);
-						
+
 						super.afterConnectionEstablished(session);
 					}
 
 					@Override
-					public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus closeStatus)
-							throws Exception {
+					public void afterConnectionClosed(@NonNull WebSocketSession session,
+							@NonNull CloseStatus closeStatus) throws Exception {
 						super.afterConnectionClosed(session, closeStatus);
 					}
 				};
 			}
 		});
 	}
-
 }

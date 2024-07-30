@@ -30,13 +30,16 @@ public class HeartbeatController {
 			String deviceName = headerAccessor.getSessionAttributes().get("deviceName").toString();
             
             long currentTimeMillis = System.currentTimeMillis();
+            DeviceInfo deviceInfo;
             if (!onlineDevices.containsKey(macAddress)) {
-            	DeviceInfo deviceInfo = new DeviceInfo(ipAddress, deviceName, currentTimeMillis);
+            	deviceInfo = new DeviceInfo(ipAddress, deviceName, currentTimeMillis);
                 onlineDevices.put(macAddress, deviceInfo);
                 broadcastOnlineDevices();
             } else {
-                onlineDevices.get(macAddress).setLastHeartbeat(currentTimeMillis);
+                deviceInfo = onlineDevices.get(macAddress);
+                deviceInfo.setLastHeartbeat(currentTimeMillis);
             }
+            deviceInfo.setHeartbeatReceived(true);
     	}
     }
 
@@ -47,11 +50,16 @@ public class HeartbeatController {
     	long currentTimeMillis = System.currentTimeMillis();
     	
         onlineDevices.forEach((macAddress, deviceInfo) -> {
-            if (deviceInfo.isOffline(currentTimeMillis)) {
+            if (!deviceInfo.isHeartbeatReceived()) {
+            	deviceInfo.incrementNoHeartbeatCount();
+            }
+            
+        	if (deviceInfo.isOffline(currentTimeMillis)) {
                 onlineDevices.remove(macAddress);
                 System.out.println("Device " + macAddress + " is offline");
                 broadcastOnlineDevices();
             }
+        	deviceInfo.setHeartbeatReceived(false);
         });
     }
 

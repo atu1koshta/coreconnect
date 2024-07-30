@@ -44,7 +44,7 @@
 			stompClient.send(
 				"/app/chat",
 				{},
-				JSON.stringify({content: content})
+				JSON.stringify({ content: content })
 			);
 		}
 
@@ -69,7 +69,6 @@
 			onlineDevicesList.innerHTML = "";
 
 			for (var key in devices) {
-				console.log("KEY", devices[key]);
 				var deviceElement = document.createElement("li");
 				deviceElement.appendChild(
 					document.createTextNode(devices[key].ipAddress + " - " + devices[key].deviceName)
