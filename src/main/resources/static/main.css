@@ -1,0 +1,36 @@
+@media (max-width: 767.98px) {
+	#onlineDevices {
+		display: none;
+		position: fixed;
+		right: 0;
+		top: 0;
+		width: 75%;
+		height: 100%;
+		background-color: white;
+		z-index: 1000;
+		box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+		padding: 20px;
+	}
+
+	#toggleOnlineDevicesBtn {
+		display: block;
+		position: fixed;
+		right: 20px;
+		top: 20px;
+		z-index: 1001;
+	}
+
+	#conversationDiv {
+		padding: 20px;
+	}
+}
+
+@media (min-width: 768px) {
+	#toggleOnlineDevicesBtn {
+		display: none;
+	}
+
+	#onlineDevices {
+		display: block !important;
+	}
+}
