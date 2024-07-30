@@ -44,8 +44,7 @@
 			stompClient.send(
 				"/app/chat",
 				{},
-				JSON.stringify({ content: content })
-			);
+				content);
 		}
 
 		function showMessageOutput(messageOutput) {
