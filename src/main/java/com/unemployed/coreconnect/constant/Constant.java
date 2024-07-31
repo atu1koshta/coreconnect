@@ -15,7 +15,8 @@ public class Constant {
 		public static final String MESSAGES = "/topic/messages";
 		public static final String HEARTBEAT = "/heartbeat";
 		
-		public static final int HEARTBEAT_INTERVAL = 10000;
-		public static final int DEVICE_OFFLINE_THRESHOLD = 30000;
+		public static final int HEARTBEAT_INTERVAL = 5000;
+		public static final int DEVICE_OFFLINE_THRESHOLD = 15000;
+		public static final int DEVICE_NO_HEARTBEAT_COUNT_THRESHOLD = 3;
 	}
 }

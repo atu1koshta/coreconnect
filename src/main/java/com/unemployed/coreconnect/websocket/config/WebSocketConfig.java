@@ -39,7 +39,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(@NonNull MessageBrokerRegistry registry) {
-		// TODO Auto-generated method stub
 		registry.enableSimpleBroker(Constant.WebSocket.TOPIC, Constant.WebSocket.QUEUE);
 		registry.setApplicationDestinationPrefixes(Constant.WebSocket.APP);
 		registry.setUserDestinationPrefix(Constant.WebSocket.USER);
@@ -66,7 +65,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 				if (device == null) {
 					return false;
 				}
-
+				
+				attributes.put("id", device.getId());
 				attributes.put("deviceName", device.getDeviceName());
 				attributes.put("ipAddress", ipAddress);
 				attributes.put("macAddress", macAddress);

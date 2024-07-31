@@ -18,7 +18,7 @@ import com.unemployed.coreconnect.model.DeviceInfo;
 public class HeartbeatService {
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
-	
+
 	private ConcurrentMap<String, DeviceInfo> onlineDevices = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("null")
@@ -26,7 +26,8 @@ public class HeartbeatService {
 		if (headerAccessor.getSessionAttributes() == null) {
 			return false;
 		}
-		
+
+		long id = headerAccessor.getSessionAttributes().get("id");
 		String ipAddress = headerAccessor.getSessionAttributes().get("ipAddress").toString();
 		String macAddress = headerAccessor.getSessionAttributes().get("macAddress").toString();
 		String deviceName = headerAccessor.getSessionAttributes().get("deviceName").toString();
@@ -42,11 +43,11 @@ public class HeartbeatService {
 			deviceInfo.setLastHeartbeat(currentTimeMillis);
 		}
 		deviceInfo.setHeartbeatReceived(true);
-		
+
 		return true;
 	}
 
-	@Scheduled(fixedRate = Constant.WebSocket.HEARTBEAT_INTERVAL) // Check every 10 seconds
+	@Scheduled(fixedRate = Constant.WebSocket.HEARTBEAT_INTERVAL)
 	public void checkHeartbeats() {
 		System.out.println("Checking heartbeats...");
 		long currentTimeMillis = System.currentTimeMillis();
@@ -54,6 +55,8 @@ public class HeartbeatService {
 		onlineDevices.forEach((macAddress, deviceInfo) -> {
 			if (!deviceInfo.isHeartbeatReceived()) {
 				deviceInfo.incrementNoHeartbeatCount();
+			} else {
+				deviceInfo.resetNoHeartbeatCount();
 			}
 
 			if (deviceInfo.isOffline(currentTimeMillis)) {

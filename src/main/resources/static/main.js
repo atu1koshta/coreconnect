@@ -1,5 +1,5 @@
 (function() {
-	const HEARTBEAT_INTERVAL = 30000;
+	const HEARTBEAT_INTERVAL = 5000;
 	let stompClient = null;
 	let heartbeatInterval;
 	let sessionId = localStorage.getItem('sessionId');
@@ -26,7 +26,7 @@
 				showMessageOutput(JSON.parse(messageOutput.body));
 			});
 			stompClient.subscribe("/topic/online-devices", (messageOutput) => {
-				updateOnlineDevices(JSON.parse(messageOutput.body));
+				showOnlineDevices(JSON.parse(messageOutput.body));
 			});
 
 			heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
@@ -56,14 +56,14 @@
 		response.scrollTop = response.scrollHeight;
 	};
 
-	const updateOnlineDevices = (devices) => {
+	const showOnlineDevices = (devices) => {
 		const onlineDevicesList = document.getElementById("onlineDevicesList");
 		onlineDevicesList.innerHTML = "";
 
 		for (const key in devices) {
 			if (devices.hasOwnProperty(key)) {
 				const deviceElement = document.createElement("li");
-				deviceElement.className = "list-group-item";
+				deviceElement.classList.add("list-group-item", "selectable-device");
 				deviceElement.appendChild(
 					document.createTextNode(`${devices[key].ipAddress} - ${devices[key].deviceName}`)
 				);

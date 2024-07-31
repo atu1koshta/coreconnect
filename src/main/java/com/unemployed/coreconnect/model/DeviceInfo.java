@@ -42,12 +42,12 @@ public class DeviceInfo {
 		return isHeartbeatReceived;
 	}
 	
-	public void setHeartbeatReceived(boolean isHeartbeatReceived) {
+	public synchronized void setHeartbeatReceived(boolean isHeartbeatReceived) {
 		this.isHeartbeatReceived = isHeartbeatReceived;
 	}
 
 	public boolean isOffline(long currentTimeMillis) {
-		return currentTimeMillis - lastHeartbeat > Constant.WebSocket.DEVICE_OFFLINE_THRESHOLD && noHeartbeatCount > 1;
+		return currentTimeMillis - lastHeartbeat > Constant.WebSocket.DEVICE_OFFLINE_THRESHOLD && noHeartbeatCount > Constant.WebSocket.DEVICE_OFFLINE_THRESHOLD_COUNT;
 	}
 
 	@Override
