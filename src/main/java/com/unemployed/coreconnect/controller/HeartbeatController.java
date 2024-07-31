@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 
 import com.unemployed.coreconnect.constant.Constant;
 import com.unemployed.coreconnect.service.HeartbeatService;
-import com.utils.Logging;
+import com.unemployed.coreconnect.utils.Logging;
 
 @Controller
 public class HeartbeatController implements Logging {

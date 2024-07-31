@@ -2,6 +2,7 @@ package com.unemployed.coreconnect.websocket.config;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.smi.UdpAddress;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,14 @@ import com.unemployed.coreconnect.model.Device;
 import com.unemployed.coreconnect.service.DeviceService;
 import com.unemployed.coreconnect.service.NetworkService;
 import com.unemployed.coreconnect.service.SnmpFetcher;
+import com.unemployed.coreconnect.utils.Logging;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, Logging {
+
+	private final Logger log = getLogger();
+	
 	@Autowired
 	private SnmpFetcher snmpFetcher;
 
@@ -90,7 +95,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
                         String deviceIpAddress = (String) session.getAttributes().get("ipAddress");
                         String deviceName = (String) session.getAttributes().get("deviceName");
-                        System.out.println("Device connected: " + deviceName + " with IP: " + deviceIpAddress);
+                        
+						log.info("Device connected: " + deviceName + " with IP: " + deviceIpAddress);
                         
                         super.afterConnectionEstablished(session);
                     }
