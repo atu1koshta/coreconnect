@@ -19,7 +19,6 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
-import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import com.unemployed.coreconnect.constant.Constant;
@@ -86,26 +85,21 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureWebSocketTransport(@NonNull WebSocketTransportRegistration registration) {
-		registration.addDecoratorFactory(new WebSocketHandlerDecoratorFactory() {
-			@Override
-			public @NonNull WebSocketHandler decorate(@NonNull WebSocketHandler handler) {
-				return new WebSocketHandlerDecorator(handler) {
-					@Override
-					public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
-						String deviceIpAddress = (String) session.getAttributes().get("ipAddress");
-						String deviceName = (String) session.getAttributes().get("deviceName");
-						System.out.println("Device connected: " + deviceName + " with IP: " + deviceIpAddress);
-
-						super.afterConnectionEstablished(session);
-					}
-
-					@Override
-					public void afterConnectionClosed(@NonNull WebSocketSession session,
-							@NonNull CloseStatus closeStatus) throws Exception {
-						super.afterConnectionClosed(session, closeStatus);
-					}
-				};
-			}
-		});
+		registration.addDecoratorFactory((@NonNull WebSocketHandler handler) -> new WebSocketHandlerDecorator(handler) {
+                    @Override
+                    public void afterConnectionEstablished(@NonNull WebSocketSession session) throws Exception {
+                        String deviceIpAddress = (String) session.getAttributes().get("ipAddress");
+                        String deviceName = (String) session.getAttributes().get("deviceName");
+                        System.out.println("Device connected: " + deviceName + " with IP: " + deviceIpAddress);
+                        
+                        super.afterConnectionEstablished(session);
+                    }
+                    
+                    @Override
+                    public void afterConnectionClosed(@NonNull WebSocketSession session,
+                            @NonNull CloseStatus closeStatus) throws Exception {
+                        super.afterConnectionClosed(session, closeStatus);
+                    }
+                });
 	}
 }

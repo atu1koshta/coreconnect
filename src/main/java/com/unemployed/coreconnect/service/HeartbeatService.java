@@ -4,7 +4,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,23 +18,15 @@ public class HeartbeatService {
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 
-	private ConcurrentMap<String, DeviceInfo> onlineDevices = new ConcurrentHashMap<>();
+	private final ConcurrentMap<String, DeviceInfo> onlineDevices = new ConcurrentHashMap<>();
 
 	@SuppressWarnings("null")
-	public boolean updateDevicesState(SimpMessageHeaderAccessor headerAccessor) {
-		if (headerAccessor.getSessionAttributes() == null) {
-			return false;
-		}
-
-		long id = headerAccessor.getSessionAttributes().get("id");
-		String ipAddress = headerAccessor.getSessionAttributes().get("ipAddress").toString();
-		String macAddress = headerAccessor.getSessionAttributes().get("macAddress").toString();
-		String deviceName = headerAccessor.getSessionAttributes().get("deviceName").toString();
-
+	public boolean updateDevicesState(int id, String ipAddress, String macAddress, String deviceName) {
+		
 		long currentTimeMillis = System.currentTimeMillis();
 		DeviceInfo deviceInfo;
 		if (!onlineDevices.containsKey(macAddress)) {
-			deviceInfo = new DeviceInfo(ipAddress, deviceName, currentTimeMillis);
+			deviceInfo = new DeviceInfo(id, ipAddress, deviceName, currentTimeMillis);
 			onlineDevices.put(macAddress, deviceInfo);
 			broadcastOnlineDevices();
 		} else {

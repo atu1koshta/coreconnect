@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.unemployed.coreconnect.model.Device;
 
 @Repository
-public interface DeviceRepository extends JpaRepository<Device, String> {
+public interface DeviceRepository extends JpaRepository<Device, Integer> {
 	Device findByMacAddress(String macAddress);
 }

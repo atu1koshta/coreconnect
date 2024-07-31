@@ -17,7 +17,7 @@
 
 		stompClient.connect({}, (frame) => {
 			sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
-			localStorage.setItem("sessionId", sessionId);
+			// localStorage.setItem("sessionId", sessionId);
 
 			setConnected(true);
 			console.log("Connected: " + frame);
@@ -63,6 +63,7 @@
 		for (const key in devices) {
 			if (devices.hasOwnProperty(key)) {
 				const deviceElement = document.createElement("li");
+				deviceElement.id = devices[key].id;
 				deviceElement.classList.add("list-group-item", "selectable-device");
 				deviceElement.appendChild(
 					document.createTextNode(`${devices[key].ipAddress} - ${devices[key].deviceName}`)
