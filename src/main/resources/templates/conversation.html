@@ -7,24 +7,13 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
 	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
 
-	<!-- FIX: js and css paths  -->
 	<script th:src="@{/js/main.js}"></script>
-	<link rel="stylesheet" type="text/css" th:href="@{main.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
 </head>
 
 <body onload="connect()">
 	<div th:replace="fragments/navbar :: body"></div>
 	<div class="container-fluid">
-		<div class="row mt-3">
-			<div class="col-md-12 text-center">
-				<button id="connect" class="btn btn-success" onclick="connect();">
-					Connect
-				</button>
-				<button id="disconnect" class="btn btn-danger" disabled="disabled" onclick="disconnect();">
-					Disconnect
-				</button>
-			</div>
-		</div>
 		<br />
 		<div class="row">
 			<div class="col-md-8">

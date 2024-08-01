@@ -5,8 +5,6 @@
   let sessionId = localStorage.getItem("sessionId");
 
   const setConnected = (connected) => {
-    document.getElementById("connect").disabled = connected;
-    document.getElementById("disconnect").disabled = !connected;
     document.getElementById("conversationDiv").style.visibility = connected
       ? "visible"
       : "hidden";
@@ -21,7 +19,7 @@
       {},
       (frame) => {
         sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
-        // localStorage.setItem("sessionId", sessionId);
+        localStorage.setItem("sessionId", sessionId);
 
         setConnected(true);
         console.log("Connected: " + frame);
