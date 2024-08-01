@@ -22,7 +22,17 @@
         setConnected(true);
         console.log("Connected: " + frame);
 
-        subscribeToTopics();
+        stompClient.subscribe("/topic/messages", (messageOutput) => {
+          showMessageOutput(JSON.parse(messageOutput.body));
+        });
+    
+        stompClient.subscribe("/topic/online-devices", (devices) => {
+          showOnlineDevices(JSON.parse(devices.body));
+        });
+    
+        stompClient.subscribe("/app/online-devices", (messageOutput) => {
+          showOnlineDevices(JSON.parse(messageOutput.body));
+        });
 
         heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
       },
@@ -31,20 +41,6 @@
         setConnected(false);
       }
     );
-  };
-
-  const subscribeToTopics = () => {
-    stompClient.subscribe("/topic/chat", (messageOutput) => {
-      showMessageOutput(JSON.parse(messageOutput.body));
-    });
-
-    stompClient.subscribe("/topic/online-devices", (devices) => {
-      showOnlineDevices(JSON.parse(devices.body));
-    });
-
-    stompClient.subscribe("/app/online-devices", (messageOutput) => {
-      showOnlineDevices(JSON.parse(messageOutput.body));
-    });
   };
 
   const sendMessage = () => {
