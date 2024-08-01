@@ -2,7 +2,6 @@
   const HEARTBEAT_INTERVAL = 5000;
   let stompClient = null;
   let heartbeatInterval;
-  let sessionId = localStorage.getItem("sessionId");
 
   const setConnected = (connected) => {
     document.getElementById("conversationDiv").style.visibility = connected
@@ -19,17 +18,11 @@
       {},
       (frame) => {
         sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
-        localStorage.setItem("sessionId", sessionId);
 
         setConnected(true);
         console.log("Connected: " + frame);
 
-        stompClient.subscribe("/topic/messages", (messageOutput) => {
-          showMessageOutput(JSON.parse(messageOutput.body));
-        });
-        stompClient.subscribe("/topic/online-devices", (messageOutput) => {
-          showOnlineDevices(JSON.parse(messageOutput.body));
-        });
+        subscribeToTopics();
 
         heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
       },
@@ -38,6 +31,20 @@
         setConnected(false);
       }
     );
+  };
+
+  const subscribeToTopics = () => {
+    stompClient.subscribe("/topic/chat", (messageOutput) => {
+      showMessageOutput(JSON.parse(messageOutput.body));
+    });
+
+    stompClient.subscribe("/topic/online-devices", (devices) => {
+      showOnlineDevices(JSON.parse(devices.body));
+    });
+
+    stompClient.subscribe("/app/online-devices", (messageOutput) => {
+      showOnlineDevices(JSON.parse(messageOutput.body));
+    });
   };
 
   const sendMessage = () => {
@@ -113,7 +120,6 @@
         setConnected(false);
         console.log("Disconnected");
         clearInterval(heartbeatInterval);
-        localStorage.removeItem("sessionId");
       });
     }
   };
@@ -125,11 +131,7 @@
   };
 
   document.addEventListener("DOMContentLoaded", () => {
-    sessionId = localStorage.getItem("sessionId");
-    if (sessionId) {
-      console.log("SESSION EXISTS: " + sessionId);
-      connect();
-    }
+    connect();
   });
 
   // Export functions to global scope for buttons to access

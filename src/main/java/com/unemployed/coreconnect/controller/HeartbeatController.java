@@ -1,14 +1,17 @@
 package com.unemployed.coreconnect.controller;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import com.unemployed.coreconnect.constant.Constant;
+import com.unemployed.coreconnect.model.DeviceInfo;
 import com.unemployed.coreconnect.service.HeartbeatService;
 import com.unemployed.coreconnect.utils.Logging;
 
@@ -38,5 +41,11 @@ public class HeartbeatController implements Logging {
 
             heartbeatService.updateDevicesState(id, ipAddress, macAddress, deviceName);
         }
+    }
+
+    // To send initial list of online device as immediately after user logged in
+    @SubscribeMapping(Constant.WebSocket.INITIAL_ONLINE_DEVICES)
+    public Collection<DeviceInfo> initialOnlineDevices() {
+        return heartbeatService.getOnlineDevices();
     }
 }
