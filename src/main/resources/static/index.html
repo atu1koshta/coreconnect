@@ -6,18 +6,20 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
 	<script src="main.js"></script>
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<link href="main.css" rel="stylesheet">
-
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="main.css" rel="stylesheet" />
 </head>
 
 <body onload="connect()">
 	<div class="container-fluid">
 		<div class="row mt-3">
 			<div class="col-md-12 text-center">
-				<button id="connect" class="btn btn-success" onclick="connect();">Connect</button>
-				<button id="disconnect" class="btn btn-danger" disabled="disabled"
-					onclick="disconnect();">Disconnect</button>
+				<button id="connect" class="btn btn-success" onclick="connect();">
+					Connect
+				</button>
+				<button id="disconnect" class="btn btn-danger" disabled="disabled" onclick="disconnect();">
+					Disconnect
+				</button>
 			</div>
 		</div>
 		<br />
@@ -27,10 +29,12 @@
 					<div class="input-group mb-3">
 						<input type="text" id="content" class="form-control" placeholder="Write a message..." />
 						<div class="input-group-append">
-							<button id="sendMessage" class="btn btn-primary" onclick="sendMessage();">Send</button>
+							<button id="sendMessage" class="btn btn-primary" onclick="sendMessage();">
+								Send
+							</button>
 						</div>
 					</div>
-					<div id="response" class="border p-3" style="height: 300px; overflow-y: auto;"></div>
+					<div id="response" class="border p-3" style="height: 300px; overflow-y: auto"></div>
 				</div>
 			</div>
 			<div class="col-md-4">
@@ -38,8 +42,9 @@
 					<h2>Online Devices</h2>
 					<ul id="onlineDevicesList" class="list-group"></ul>
 				</div>
-				<button id="toggleOnlineDevicesBtn" class="btn btn-secondary" onclick="toggleOnlineDevices();">Show
-					Online Devices</button>
+				<button id="toggleOnlineDevicesBtn" class="btn btn-secondary" onclick="toggleOnlineDevices();">
+					Show Online Devices
+				</button>
 			</div>
 		</div>
 	</div>
