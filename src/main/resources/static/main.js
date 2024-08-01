@@ -10,7 +10,7 @@
     document.getElementById("conversationDiv").style.visibility = connected
       ? "visible"
       : "hidden";
-	  document.getElementById("response").innerHTML = "";
+    document.getElementById("response").innerHTML = "";
   };
 
   const connect = () => {
@@ -43,7 +43,7 @@
   };
 
   const sendMessage = () => {
-	const chatInput = document.getElementById("content");
+    const chatInput = document.getElementById("content");
     if (stompClient && stompClient.connected) {
       stompClient.send("/app/chat", {}, chatInput.value);
     } else {
@@ -52,7 +52,7 @@
   };
 
   const showMessageOutput = (messageOutput) => {
-	const response = document.getElementById("response");
+    const response = document.getElementById("response");
     const p = document.createElement("p");
     p.style.wordWrap = "break-word";
     p.appendChild(
@@ -84,6 +84,7 @@
         deviceElement.addEventListener("click", () => {
           selectedDeviceId = devices[key].id;
           highlightSelectedDevice(deviceElement);
+          clearChat();
         });
       }
     }
@@ -93,6 +94,13 @@
     const allDevices = document.querySelectorAll(".selectable-device");
     allDevices.forEach((device) => device.classList.remove("active"));
     deviceElement.classList.add("active");
+  };
+
+  const clearChat = () => {
+    const chatInput = document.getElementById("content");
+    const response = document.getElementById("response");
+    chatInput.value = "";
+    response.innerHTML = "";
   };
 
   const sendHeartbeat = () => {
