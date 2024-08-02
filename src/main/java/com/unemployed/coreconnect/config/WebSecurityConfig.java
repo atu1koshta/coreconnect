@@ -19,18 +19,22 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(requests -> requests
-                .requestMatchers("/").permitAll()
-                .anyRequest().authenticated())
-                .formLogin(form -> form
-                .defaultSuccessUrl("/conversation", true)
-                .permitAll()
+                    .requestMatchers("/").permitAll()
+                    .anyRequest().authenticated())
+                    .formLogin(form -> form
+                    .defaultSuccessUrl("/conversation", true)
+                    .permitAll()
                 )
                 .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-                .permitAll());
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                    .permitAll())
+                .sessionManagement(session -> session 
+                    .sessionFixation().migrateSession()
+                    .maximumSessions(1)
+                    .expiredUrl("/login?expired"));
 
         return http.build();
     }

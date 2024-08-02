@@ -2,6 +2,7 @@
   const HEARTBEAT_INTERVAL = 5000;
   let stompClient = null;
   let heartbeatInterval;
+  let selectedDeviceId;
 
   const setConnected = (connected) => {
     document.getElementById("conversationDiv").style.visibility = connected
@@ -25,11 +26,17 @@
         stompClient.subscribe("/topic/messages", (messageOutput) => {
           showMessageOutput(JSON.parse(messageOutput.body));
         });
-    
+
+        // Subscribe to the user's private message queue
+        stompClient.subscribe("/user/queue/messages", (privateMessage) => {
+          // showMessageOutput(JSON.parse(privateMessage.body));
+          console.log("Private message received: ", privateMessage);
+        });
+
         stompClient.subscribe("/topic/online-devices", (devices) => {
           showOnlineDevices(JSON.parse(devices.body));
         });
-    
+
         stompClient.subscribe("/app/online-devices", (messageOutput) => {
           showOnlineDevices(JSON.parse(messageOutput.body));
         });
@@ -46,7 +53,18 @@
   const sendMessage = () => {
     const chatInput = document.getElementById("content");
     if (stompClient && stompClient.connected) {
-      stompClient.send("/app/chat", {}, chatInput.value);
+      if (selectedDeviceId) {
+        stompClient.send(
+          "/app/private-chat",
+          {},
+          JSON.stringify({
+            recipient: selectedDeviceId,
+            message: chatInput.value,
+          })
+        );
+      } else {
+        stompClient.send("/app/chat", {}, chatInput.value);
+      }
     } else {
       console.warn("Connection is not established. Message not sent.");
     }
