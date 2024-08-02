@@ -1,5 +1,6 @@
 package com.unemployed.coreconnect.service;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -23,6 +24,10 @@ public class HeartbeatService implements Logging {
     private SimpMessagingTemplate messagingTemplate;
 
     private final ConcurrentMap<String, DeviceInfo> onlineDevices = new ConcurrentHashMap<>();
+
+    public Collection<DeviceInfo> getOnlineDevices() {
+        return this.onlineDevices.values();
+    }
 
     @SuppressWarnings("null")
     public boolean updateDevicesState(int id, String ipAddress, String macAddress, String deviceName) {
@@ -57,10 +62,10 @@ public class HeartbeatService implements Logging {
 
             if (deviceInfo.isOffline(currentTimeMillis)) {
                 onlineDevices.remove(macAddress);
-                
-				log.info("Device " + macAddress + " is offline");
-                
-				broadcastOnlineDevices();
+
+                log.info("Device " + macAddress + " is offline");
+
+                broadcastOnlineDevices();
             }
             deviceInfo.setHeartbeatReceived(false);
         });

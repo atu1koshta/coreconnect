@@ -12,6 +12,7 @@ public class Constant {
 		public static final String USER = "/user";
 		public static final String CHAT = "/chat";
 		public static final String ONLINE_DEVICES = "/topic/online-devices";
+		public static final String INITIAL_ONLINE_DEVICES = "/online-devices";
 		public static final String MESSAGES = "/topic/messages";
 		public static final String HEARTBEAT = "/heartbeat";
 		

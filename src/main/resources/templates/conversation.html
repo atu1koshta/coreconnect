@@ -1,27 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title>Chat WebSocket</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
-	<script src="main.js"></script>
 	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-	<link href="main.css" rel="stylesheet" />
+
+	<script th:src="@{/js/main.js}"></script>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/main.css}" />
 </head>
 
-<body onload="connect()">
+<body>
+	<div th:replace="fragments/navbar :: body"></div>
 	<div class="container-fluid">
-		<div class="row mt-3">
-			<div class="col-md-12 text-center">
-				<button id="connect" class="btn btn-success" onclick="connect();">
-					Connect
-				</button>
-				<button id="disconnect" class="btn btn-danger" disabled="disabled" onclick="disconnect();">
-					Disconnect
-				</button>
-			</div>
-		</div>
 		<br />
 		<div class="row">
 			<div class="col-md-8">
@@ -29,7 +21,7 @@
 					<div class="input-group mb-3">
 						<input type="text" id="content" class="form-control" placeholder="Write a message..." />
 						<div class="input-group-append">
-							<button id="sendMessage" class="btn btn-primary" onclick="sendMessage();">
+							<button id="sendMessage" class="btn btn-primary ml-2" onclick="sendMessage();">
 								Send
 							</button>
 						</div>
