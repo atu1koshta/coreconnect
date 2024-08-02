@@ -45,3 +45,5 @@ node_modules/
 src/main/resources/application.properties
 
 keystore.p12
+public_key.pem
+private_key.pem
