@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Navbar Fragment</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/">CoreConnect</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -15,19 +18,22 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/">Home</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" th:if="${isLoggedIn}">
                     <a class="nav-link" href="/conversation">Chat</a>
                 </li>
             </ul>
             <!-- // add logout button -->
-            <form class="form-inline my-2 my-lg-0">
-              <a class="btn btn-outline-danger my-2 my-sm-0" th:if="${isLoggedIn}" href="/logout">Logout</a>
-              <a class="btn btn-outline-primary my-2 my-sm-0" th:unless="${isLoggedIn}" href="/login">Login</a>
-            </form>
+            <div class="form-inline my-2 my-lg-0">
+                <form th:action="@{/logout}" method="post" th:if="${isLoggedIn}">
+                    <button type="submit" class="btn btn-outline-danger my-2 my-sm-0">Logout</button>
+                </form>
+                <a class="btn btn-outline-primary my-2 my-sm-0" th:unless="${isLoggedIn}" href="/login">Login</a>
+            </div>
         </div>
     </nav>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
