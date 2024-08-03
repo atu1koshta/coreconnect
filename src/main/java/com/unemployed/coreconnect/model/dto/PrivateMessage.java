@@ -1,4 +1,4 @@
-package com.unemployed.coreconnect.model;
+package com.unemployed.coreconnect.model.dto;
 
 public class PrivateMessage {
     private final String recipient;

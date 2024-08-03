@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.unemployed.coreconnect.model.entities.User;
+import com.unemployed.coreconnect.model.entity.User;
 import com.unemployed.coreconnect.service.UserService;
 import com.unemployed.coreconnect.utils.Logging;
 

@@ -23,7 +23,7 @@ import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import com.unemployed.coreconnect.constant.Constant;
-import com.unemployed.coreconnect.model.Device;
+import com.unemployed.coreconnect.model.entity.Device;
 import com.unemployed.coreconnect.service.DeviceService;
 import com.unemployed.coreconnect.service.NetworkService;
 import com.unemployed.coreconnect.service.SnmpFetcher;

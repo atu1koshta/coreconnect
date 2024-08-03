@@ -11,7 +11,7 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import com.unemployed.coreconnect.constant.Constant;
-import com.unemployed.coreconnect.model.DeviceInfo;
+import com.unemployed.coreconnect.model.dto.DeviceInfo;
 import com.unemployed.coreconnect.service.HeartbeatService;
 import com.unemployed.coreconnect.utils.Logging;
 

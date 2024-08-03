@@ -1,4 +1,4 @@
-package com.unemployed.coreconnect.model;
+package com.unemployed.coreconnect.model.dto;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

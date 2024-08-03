@@ -3,7 +3,7 @@ package com.unemployed.coreconnect.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.unemployed.coreconnect.model.entities.User;
+import com.unemployed.coreconnect.model.entity.User;
 
 
 @Repository

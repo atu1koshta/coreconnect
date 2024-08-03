@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.unemployed.coreconnect.model.entities.User;
+import com.unemployed.coreconnect.model.entity.User;
 import com.unemployed.coreconnect.repository.UserRepository;
 
 import jakarta.transaction.Transactional;

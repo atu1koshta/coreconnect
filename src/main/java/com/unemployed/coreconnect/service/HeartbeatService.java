@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.unemployed.coreconnect.constant.Constant;
-import com.unemployed.coreconnect.model.DeviceInfo;
+import com.unemployed.coreconnect.model.dto.DeviceInfo;
 import com.unemployed.coreconnect.utils.Logging;
 
 @Service

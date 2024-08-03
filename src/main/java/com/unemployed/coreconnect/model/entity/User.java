@@ -1,4 +1,4 @@
-package com.unemployed.coreconnect.model.entities;
+package com.unemployed.coreconnect.model.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
