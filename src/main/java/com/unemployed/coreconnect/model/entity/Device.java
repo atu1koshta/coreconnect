@@ -1,10 +1,11 @@
-package com.unemployed.coreconnect.model;
+package com.unemployed.coreconnect.model.entity;
+
+import com.github.javafaker.Faker;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import com.github.javafaker.Faker;
 
 @Entity
 public class Device {

@@ -1,4 +1,4 @@
-package com.unemployed.coreconnect.model.entities;
+package com.unemployed.coreconnect.model.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -61,15 +63,18 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
+    public User() {
+        this.isActive = true;
+        this.roles = new ArrayList<>();
+        roles.add(Role.USER);
+    }
+
     public User(String username, String email, String password, String firstName) {
+        this();
         this.username = username;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
-        this.lastLogin = LocalDateTime.now();
-        this.roles = new ArrayList<>();
-        roles.add(Role.USER);
-        this.isActive = true;
     }
 
     public User(String username, String email, String password, String firstName, String lastName) {
@@ -186,5 +191,25 @@ public class User {
         USER,
         ADMIN,
         MODERATOR
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+        this.lastLogin = now;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.updatedAt = now;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("username: %s, email: %s, first_name: %s, last_name: %s, last_login: %s, is_active: %s",
+                username, email, firstName, lastName, lastLogin, isActive);
     }
 }

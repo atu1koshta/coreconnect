@@ -3,7 +3,7 @@ package com.unemployed.coreconnect.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.unemployed.coreconnect.model.Device;
+import com.unemployed.coreconnect.model.entity.Device;
 import com.unemployed.coreconnect.repository.DeviceRepository;
 
 @Service

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unemployed.coreconnect.constant.Constant;
-import com.unemployed.coreconnect.model.PrivateMessage;
-import com.unemployed.coreconnect.model.ServerResponseMessage;
+import com.unemployed.coreconnect.model.dto.PrivateMessage;
+import com.unemployed.coreconnect.model.dto.ServerResponseMessage;
 import com.unemployed.coreconnect.utils.Logging;
 
 @Controller
