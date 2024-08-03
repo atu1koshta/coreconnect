@@ -1,6 +1,5 @@
 package com.unemployed.coreconnect.config;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,14 +13,11 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.unemployed.coreconnect.service.DeviceDetailService;
-import com.unemployed.coreconnect.utils.Logging;
 import com.unemployed.coreconnect.utils.PublicKeyLoader;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig implements Logging {
-    private final Logger log = getLogger();
-    
+public class WebSecurityConfig{
     @Value("${public.key.path}")
     private String publicKeyPath;
 
