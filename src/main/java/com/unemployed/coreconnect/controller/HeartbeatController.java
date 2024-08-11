@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -13,12 +14,11 @@ import org.springframework.stereotype.Controller;
 import com.unemployed.coreconnect.constant.Constant;
 import com.unemployed.coreconnect.model.dto.DeviceInfo;
 import com.unemployed.coreconnect.service.HeartbeatService;
-import com.unemployed.coreconnect.utils.Logging;
 
 @Controller
-public class HeartbeatController implements Logging {
+public class HeartbeatController {
 
-    private final Logger log = getLogger();
+    private static final Logger log = LoggerFactory.getLogger(HeartbeatController.class);
 
     @Autowired
     private HeartbeatService heartbeatService;

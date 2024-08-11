@@ -3,6 +3,7 @@ package com.unemployed.coreconnect.controller;
 import java.util.Map;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -15,12 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unemployed.coreconnect.constant.Constant;
 import com.unemployed.coreconnect.model.dto.PrivateMessage;
 import com.unemployed.coreconnect.model.dto.ServerResponseMessage;
-import com.unemployed.coreconnect.utils.Logging;
 
 @Controller
-public class ChatController implements Logging {
+public class ChatController {
 
-    private final Logger log = getLogger();
+    private static final Logger log = LoggerFactory.getLogger(ChatController.class);
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;

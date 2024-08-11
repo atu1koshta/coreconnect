@@ -11,9 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.unemployed.coreconnect.utils.Logging;
-
-public class DeviceDetailService implements UserDetailsService, Logging {
+public class DeviceDetailService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
