@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -13,13 +14,12 @@ import org.springframework.stereotype.Service;
 
 import com.unemployed.coreconnect.constant.Constant;
 import com.unemployed.coreconnect.model.dto.DeviceInfo;
-import com.unemployed.coreconnect.utils.Logging;
 
 @Service
 @EnableScheduling
-public class HeartbeatService implements Logging {
+public class HeartbeatService {
 
-    private final Logger log = getLogger();
+    private static final Logger log = LoggerFactory.getLogger(HeartbeatService.class);
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 

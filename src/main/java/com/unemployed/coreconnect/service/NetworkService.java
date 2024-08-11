@@ -9,13 +9,14 @@ import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.unemployed.coreconnect.utils.Logging;
-
 @Service
-public class NetworkService implements Logging {
-
+public class NetworkService {
+    private static final Logger log = LoggerFactory.getLogger(NetworkService.class);
+    
     public static String getGatewayIp() {
         String gatewayIp = null;
         try {
@@ -33,7 +34,7 @@ public class NetworkService implements Logging {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(String.format("Error getting gateway IP: "), e.getMessage());
         }
         return gatewayIp;
     }

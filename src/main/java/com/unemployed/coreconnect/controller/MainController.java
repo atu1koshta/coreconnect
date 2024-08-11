@@ -1,6 +1,7 @@
 package com.unemployed.coreconnect.controller;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,13 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.unemployed.coreconnect.model.entity.User;
 import com.unemployed.coreconnect.service.UserService;
-import com.unemployed.coreconnect.utils.Logging;
 
 
 
 @Controller
-public class MainController implements Logging {
-    private final Logger log = getLogger();
+public class MainController {
+    private static final Logger log = LoggerFactory.getLogger(MainController.class);
 
     @Autowired
     private UserService userService;
