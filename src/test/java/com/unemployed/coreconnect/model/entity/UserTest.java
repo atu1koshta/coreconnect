@@ -1,4 +1,4 @@
-package com.unemployed.coreconnect.model;
+package com.unemployed.coreconnect.model.entity;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.unemployed.coreconnect.factory.UserFactory;
-import com.unemployed.coreconnect.model.entity.User;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
