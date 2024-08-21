@@ -76,4 +76,25 @@ public class UserServiceTest {
         }
     }
 
+    @Test
+    public void testFindByUsername() {
+        User user = UserFactory.create();
+        when(userRepository.findByUsername(anyString())).thenReturn(user);
+
+        User foundUser = userService.findByUsername("john");
+
+        assertNotNull(foundUser);
+        assertEquals(user, foundUser);
+    }
+
+    @Test
+    public void testFindByEmail() {
+        User user = UserFactory.create();
+        when(userRepository.findByEmail(anyString())).thenReturn(user);
+
+        User foundUser = userService.findByEmail("test@example.com");
+
+        assertNotNull(foundUser);
+        assertEquals(user, foundUser);
+    }
 }
