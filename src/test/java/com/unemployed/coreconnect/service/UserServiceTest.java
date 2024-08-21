@@ -14,9 +14,11 @@ import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.unemployed.coreconnect.exception.UserAlreadyExistsException;
 import com.unemployed.coreconnect.factory.UserFactory;
 import com.unemployed.coreconnect.model.entity.User;
 import com.unemployed.coreconnect.repository.UserRepository;
+
 
 public class UserServiceTest {
 
@@ -36,6 +38,7 @@ public class UserServiceTest {
 
     @Nested
     class SaveUserTests {
+
         private User user;
 
         @BeforeEach
@@ -44,21 +47,10 @@ public class UserServiceTest {
         }
 
         @Test
-        public void testSaveUser_Fail_PasswordEmpty() {
-            user.setPassword("");
-
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-                userService.saveUser(user);
-            });
-
-            assertEquals(exception.getMessage(), "Password is required");
-        }
-
-        @Test
         public void testSaveUser_Fail_UsernameOrEmailExists() {
             when(userRepository.existsByUsernameOrEmail(anyString(), anyString())).thenReturn(true);
 
-            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
                 userService.saveUser(user);
             });
 

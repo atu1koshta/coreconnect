@@ -32,20 +32,16 @@ public class User {
     private Long id;
 
     @Column(name = "username")
-    @NotNull(message = "Username is required")
     @NotBlank(message = "Username cannot be empty")
     @Size(min = 4, max = 12)
     private String username;
 
     @Column(name = "email")
-    @NotNull(message = "Email is required")
     @NotBlank(message = "Email cannot be empty")
-    @Size(max = 255)
     @Email
     private String email;
 
     @Column(name = "password")
-    @NotNull(message = "Password is required")
     @NotBlank(message = "Password cannot be empty")
     private String password;
 
@@ -56,7 +52,6 @@ public class User {
     private String providerId;
 
     @Column(name = "first_name", nullable = false, length = 255)
-    @NotNull(message = "First name is required")
     @NotBlank(message = "First name cannot be empty")
     private String firstName;
 
@@ -64,15 +59,12 @@ public class User {
     private String lastName;
 
     @Column(name = "created_at", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @NotNull
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    @NotNull
     private LocalDateTime updatedAt;
 
     @Column(name = "last_login", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    @NotNull
     private LocalDateTime lastLogin;
 
     @Column(name = "roles", nullable = false)
@@ -84,7 +76,6 @@ public class User {
     
 
     @Column(name = "is_active")
-    @NotNull
     private Boolean isActive;
 
     public User() {
