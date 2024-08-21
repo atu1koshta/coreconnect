@@ -1,5 +1,7 @@
 package com.unemployed.coreconnect.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -15,4 +17,6 @@ public interface  UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END FROM User u WHERE u.username = :username OR u.email = :email")
     boolean existsByUsernameOrEmail(String username, String email);
+
+    Optional<User> findByUsernameOrEmail(String username, String email);
 }

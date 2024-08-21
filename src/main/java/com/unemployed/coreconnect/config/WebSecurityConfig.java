@@ -12,12 +12,12 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.unemployed.coreconnect.service.DeviceDetailService;
+import com.unemployed.coreconnect.service.CustomUserDetailService;
 import com.unemployed.coreconnect.utils.PublicKeyLoader;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig{
+public class WebSecurityConfig {
     @Value("${public.key.path}")
     private String publicKeyPath;
 
@@ -51,7 +51,7 @@ public class WebSecurityConfig{
 
     @Bean
 	public UserDetailsService userDetailsService() {
-		return new DeviceDetailService();
+		return new CustomUserDetailService();
 	}
 
     @Bean
