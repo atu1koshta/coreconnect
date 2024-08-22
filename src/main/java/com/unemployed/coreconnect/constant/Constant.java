@@ -21,4 +21,9 @@ public class Constant {
 		public static final int DEVICE_OFFLINE_THRESHOLD = 15000;
 		public static final int DEVICE_NO_HEARTBEAT_COUNT_THRESHOLD = 3;
 	}
+
+	public static class View {
+		public static final String LOGIN = "/login";
+		public static final String CONVERSATION = "/conversation";
+	}
 }

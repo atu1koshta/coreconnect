@@ -21,41 +21,9 @@ public class SnmpFetcher {
 	// connected devices
 	private static final OID oidIp = new OID(".1.3.6.1.2.1.4.22.1.3");
 
-	public ResponseEvent<UdpAddress> fetchSnmpData() throws IOException {
-		String defaultGateway = NetworkService.getGatewayIp();
+	public String getMacAddressForIp(String ipAddress) throws IOException {
+		ResponseEvent<UdpAddress> response = fetchSnmpData();
 
-		// Create a transport mapping
-		TransportMapping<?> transport = new DefaultUdpTransportMapping();
-		transport.listen();
-
-		// Create Snmp instance for SNMP operations
-		Snmp snmp = new Snmp(transport);
-
-		// Create Target Address object
-		CommunityTarget<UdpAddress> comtarget = new CommunityTarget<UdpAddress>();
-		comtarget.setCommunity(new OctetString("public"));
-		comtarget.setVersion(SnmpConstants.version2c);
-		comtarget.setAddress(new UdpAddress(defaultGateway + "/161")); // replace with your router's IP address
-		comtarget.setRetries(2);
-		comtarget.setTimeout(1000);
-
-		// Create the PDU object
-		PDU pdu = new PDU();
-		pdu.add(new VariableBinding(oidMac));
-		pdu.add(new VariableBinding(oidIp));
-		pdu.setType(PDU.GETBULK);
-		pdu.setMaxRepetitions(50); // you may need to adjust this value based on the number of connected devices
-
-		// Send the PDU and receive response
-		ResponseEvent<UdpAddress> response = snmp.send(pdu, comtarget);
-
-		// Close the connection
-		snmp.close();
-		
-		return response;
-	}
-
-	public String getMacAddressForIp(ResponseEvent<UdpAddress> response, String ipAddress) {
 		if (response != null) {
 			PDU responsePDU = response.getResponse();
 			if (responsePDU != null) {
@@ -71,5 +39,36 @@ public class SnmpFetcher {
 		}
 		return null;
 	}
+	
+	private ResponseEvent<UdpAddress> fetchSnmpData() throws IOException {
+		String defaultGateway = NetworkService.getGatewayIp();
 
+		// Create a transport mapping
+		TransportMapping<?> transport = new DefaultUdpTransportMapping();
+		transport.listen();
+
+                ResponseEvent<UdpAddress> response;
+            // Create Target Address object
+            try ( // Create Snmp instance for SNMP operations
+                    Snmp snmp = new Snmp(transport)) {
+                // Create Target Address object
+                CommunityTarget<UdpAddress> comtarget = new CommunityTarget<>();
+                comtarget.setCommunity(new OctetString("public"));
+                comtarget.setVersion(SnmpConstants.version2c);
+                comtarget.setAddress(new UdpAddress(defaultGateway + "/161")); // replace with your router's IP address
+                comtarget.setRetries(2);
+                comtarget.setTimeout(1000);
+                // Create the PDU object
+                PDU pdu = new PDU();
+                pdu.add(new VariableBinding(oidMac));
+                pdu.add(new VariableBinding(oidIp));
+                pdu.setType(PDU.GETBULK);
+                pdu.setMaxRepetitions(50); // you may need to adjust this value based on the number of connected devices
+                // Send the PDU and receive response
+                response = snmp.send(pdu, comtarget);
+                // Close the connection
+            }
+		
+		return response;
+	}
 }

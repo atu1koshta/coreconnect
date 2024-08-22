@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Arrays;
@@ -11,12 +12,26 @@ import java.util.Enumeration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.stereotype.Service;
+
+import com.unemployed.coreconnect.constant.Constant;
+import com.unemployed.coreconnect.model.entity.Device;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class NetworkService {
+
     private static final Logger log = LoggerFactory.getLogger(NetworkService.class);
-    
+
+    @Autowired
+    private DeviceService deviceService;
+
+    @Autowired
+    private SnmpFetcher snmpFetcher;
+
     public static String getGatewayIp() {
         String gatewayIp = null;
         try {
@@ -56,5 +71,27 @@ public class NetworkService {
 
         }
         return null;
+    }
+
+    public Device getDeviceFromIpAddress(String ipAddress) throws IOException {
+        String macAddress = snmpFetcher.getMacAddressForIp(ipAddress);
+
+        return deviceService.checkAndRegisterDevice(macAddress);
+    }
+
+    public String getLocalIpAddressFromRequest(Object request) {
+        String ipAddress = null;
+        if (request instanceof HttpServletRequest httpServletRequest) {
+            ipAddress = httpServletRequest.getRemoteAddr();
+        } else if (request instanceof ServerHttpRequest serverHttpRequest) {
+            InetSocketAddress remoteAddress = serverHttpRequest.getRemoteAddress();
+            ipAddress = (remoteAddress != null) ? remoteAddress.getAddress().getHostAddress() : null;
+        }
+
+        if (ipAddress != null && ipAddress.equals(Constant.Network.LOCAL_IPV6)) {
+            ipAddress = NetworkService.getHostLocalIp();
+        }
+
+        return ipAddress;
     }
 }
