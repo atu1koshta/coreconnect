@@ -2,7 +2,7 @@
   const HEARTBEAT_INTERVAL = 5000;
   let stompClient = null;
   let heartbeatInterval;
-  let selectedDeviceId;
+  let selectedUser;
 
   const setConnected = (connected) => {
     document.getElementById("conversationDiv").style.visibility = connected
@@ -29,16 +29,15 @@
 
         // Subscribe to the user's private message queue
         stompClient.subscribe("/user/queue/messages", (privateMessage) => {
-          // showMessageOutput(JSON.parse(privateMessage.body));
-          console.log("Private message received: ", privateMessage);
+          showMessageOutput(JSON.parse(privateMessage.body), true);
         });
 
-        stompClient.subscribe("/topic/online-devices", (devices) => {
-          showOnlineDevices(JSON.parse(devices.body));
+        stompClient.subscribe("/topic/online-users", (users) => {
+          showOnlineUsers(JSON.parse(users.body));
         });
 
-        stompClient.subscribe("/app/online-devices", (messageOutput) => {
-          showOnlineDevices(JSON.parse(messageOutput.body));
+        stompClient.subscribe("/app/online-users", (messageOutput) => {
+          showOnlineUsers(JSON.parse(messageOutput.body));
         });
 
         heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
@@ -53,12 +52,12 @@
   const sendMessage = () => {
     const chatInput = document.getElementById("content");
     if (stompClient && stompClient.connected) {
-      if (selectedDeviceId) {
+      if (selectedUser) {
         stompClient.send(
           "/app/private-chat",
           {},
           JSON.stringify({
-            recipient: selectedDeviceId,
+            recipient: selectedUser,
             message: chatInput.value,
           })
         );
@@ -70,39 +69,34 @@
     }
   };
 
-  const showMessageOutput = (messageOutput) => {
+  const showMessageOutput = (messageOutput, private=false) => {
     const response = document.getElementById("response");
     const p = document.createElement("p");
     p.style.wordWrap = "break-word";
     p.appendChild(
       document.createTextNode(
-        `${messageOutput.sender} [${messageOutput.time}]: ${messageOutput.message}`
+        `${messageOutput.sender} [${messageOutput.time}${private ? "*" : ""}]: ${messageOutput.message}`
       )
     );
     response.appendChild(p);
     response.scrollTop = response.scrollHeight;
   };
 
-  const showOnlineDevices = (devices) => {
+  const showOnlineUsers = (users) => {
     const onlineDevicesList = document.getElementById("onlineDevicesList");
     onlineDevicesList.innerHTML = "";
 
-    for (const key in devices) {
-      if (devices.hasOwnProperty(key)) {
-        const deviceElement = document.createElement("li");
-        deviceElement.id = devices[key].id;
-        deviceElement.classList.add("list-group-item", "selectable-device");
-        deviceElement.appendChild(
-          document.createTextNode(
-            `${devices[key].ipAddress} - ${devices[key].deviceName}`
-          )
-        );
-        onlineDevicesList.appendChild(deviceElement);
+    for (const key in users) {
+      if (users.hasOwnProperty(key)) {
+        const userElement = document.createElement("li");
+        userElement.classList.add("list-group-item", "selectable-device");
+        userElement.appendChild(document.createTextNode(users[key].username));
+        onlineDevicesList.appendChild(userElement);
 
         // Add click event listener to open chat panel
-        deviceElement.addEventListener("click", () => {
-          selectedDeviceId = devices[key].id;
-          highlightSelectedDevice(deviceElement);
+        userElement.addEventListener("click", () => {
+          selectedUser = users[key].username;
+          highlightSelectedDevice(userElement);
           clearChat();
         });
       }

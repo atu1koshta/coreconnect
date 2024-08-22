@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.unemployed.coreconnect.constant.Constant;
-import com.unemployed.coreconnect.model.dto.DeviceInfo;
+import com.unemployed.coreconnect.model.dto.OnlineUserInfo;
 
 @Service
 @EnableScheduling
@@ -23,26 +23,26 @@ public class HeartbeatService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    private final ConcurrentMap<String, DeviceInfo> onlineDevices = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, OnlineUserInfo> onlineDevices = new ConcurrentHashMap<>();
 
-    public Collection<DeviceInfo> getOnlineDevices() {
+    public Collection<OnlineUserInfo> getOnlineDevices() {
         return this.onlineDevices.values();
     }
 
     @SuppressWarnings("null")
-    public boolean updateDevicesState(int id, String ipAddress, String macAddress, String deviceName) {
+    public boolean updateOnlineStates(String ipAddress, String macAddress, String username) {
 
         long currentTimeMillis = System.currentTimeMillis();
-        DeviceInfo deviceInfo;
-        if (!onlineDevices.containsKey(macAddress)) {
-            deviceInfo = new DeviceInfo(id, ipAddress, deviceName, currentTimeMillis);
-            onlineDevices.put(macAddress, deviceInfo);
+        OnlineUserInfo onlineDeviceInfo;
+        if (!onlineDevices.containsKey(username)) {
+            onlineDeviceInfo = new OnlineUserInfo(ipAddress, username, currentTimeMillis);
+            onlineDevices.put(username, onlineDeviceInfo);
             broadcastOnlineDevices();
         } else {
-            deviceInfo = onlineDevices.get(macAddress);
-            deviceInfo.setLastHeartbeat(currentTimeMillis);
+            onlineDeviceInfo = onlineDevices.get(username);
+            onlineDeviceInfo.setLastHeartbeat(currentTimeMillis);
         }
-        deviceInfo.setHeartbeatReceived(true);
+        onlineDeviceInfo.setHeartbeatReceived(true);
 
         return true;
     }
@@ -53,25 +53,25 @@ public class HeartbeatService {
 
         long currentTimeMillis = System.currentTimeMillis();
 
-        onlineDevices.forEach((macAddress, deviceInfo) -> {
-            if (!deviceInfo.isHeartbeatReceived()) {
-                deviceInfo.incrementNoHeartbeatCount();
+        onlineDevices.forEach((username, onlineDeviceInfo) -> {
+            if (!onlineDeviceInfo.isHeartbeatReceived()) {
+                onlineDeviceInfo.incrementNoHeartbeatCount();
             } else {
-                deviceInfo.resetNoHeartbeatCount();
+                onlineDeviceInfo.resetNoHeartbeatCount();
             }
 
-            if (deviceInfo.isOffline(currentTimeMillis)) {
-                onlineDevices.remove(macAddress);
+            if (onlineDeviceInfo.isOffline(currentTimeMillis)) {
+                onlineDevices.remove(username);
 
-                log.info("Device " + macAddress + " is offline");
+                log.info("User " + username + " is offline");
 
                 broadcastOnlineDevices();
             }
-            deviceInfo.setHeartbeatReceived(false);
+            onlineDeviceInfo.setHeartbeatReceived(false);
         });
     }
 
     private void broadcastOnlineDevices() {
-        messagingTemplate.convertAndSend(Constant.WebSocket.ONLINE_DEVICES, onlineDevices.values());
+        messagingTemplate.convertAndSend(Constant.WebSocket.ONLINE_USERS, onlineDevices.values());
     }
 }

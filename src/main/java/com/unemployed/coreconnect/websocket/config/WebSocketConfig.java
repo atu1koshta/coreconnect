@@ -1,15 +1,10 @@
 package com.unemployed.coreconnect.websocket.config;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
@@ -19,11 +14,9 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
-import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import com.unemployed.coreconnect.constant.Constant;
-import com.unemployed.coreconnect.model.entity.Device;
-import com.unemployed.coreconnect.service.NetworkService;
+import com.unemployed.coreconnect.websocket.CustomHandshakeInterceptor;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -32,7 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class);
 
     @Autowired
-    private NetworkService networkService;
+    private CustomHandshakeInterceptor customHandshakeInterceptor;
 
     @Override
     public void configureMessageBroker(@NonNull MessageBrokerRegistry registry) {
@@ -44,34 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
         registry.addEndpoint(Constant.WebSocket.CHAT).setAllowedOrigins("*");
-        registry.addEndpoint(Constant.WebSocket.CHAT).withSockJS().setInterceptors(new HandshakeInterceptor() {
-
-            @Override
-            public boolean beforeHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
-                    @NonNull WebSocketHandler wsHandler, @NonNull Map<String, Object> attributes) throws Exception {
-                
-                String ipAddress = networkService.getLocalIpAddressFromRequest(request);
-                Device device = networkService.getDeviceFromIpAddress(ipAddress);
-                if (device == null) {
-                    return false;
-                }
-
-                attributes.put("id", device.getId());
-                attributes.put("deviceName", device.getDeviceName());
-                attributes.put("ipAddress", ipAddress);
-                attributes.put("macAddress", device.getMacAddress());
-
-                return true;
-            }
-
-            @Override
-            public void afterHandshake(@NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response,
-                    @NonNull WebSocketHandler wsHandler, @Nullable Exception exception) {
-                // TODO Auto-generated method stub
-
-            }
-
-        });
+        registry.addEndpoint(Constant.WebSocket.CHAT).withSockJS().setInterceptors(customHandshakeInterceptor);
     }
 
     @Override

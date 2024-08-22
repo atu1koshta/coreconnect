@@ -4,9 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ServerResponseMessage {
-	private String sender;
-	private String message;
-	private String time;
+	private final String sender;
+	private final String message;
+	private final String time;
 
 	public ServerResponseMessage(String sender, String content) {
 		this.sender = sender;
