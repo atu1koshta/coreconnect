@@ -12,7 +12,7 @@ import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import com.unemployed.coreconnect.constant.Constant;
-import com.unemployed.coreconnect.model.dto.DeviceInfo;
+import com.unemployed.coreconnect.model.dto.OnlineUserInfo;
 import com.unemployed.coreconnect.service.HeartbeatService;
 
 @Controller
@@ -26,26 +26,26 @@ public class HeartbeatController {
     @MessageMapping(Constant.WebSocket.HEARTBEAT)
     public void receiveHeartbeat(SimpMessageHeaderAccessor headerAccessor) {
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
-
-        Integer id;
         String ipAddress;
         String macAddress;
         String deviceName;
+        String username;
+
         if (sessionAttributes != null) {
-            id = (Integer) sessionAttributes.get("id");
             ipAddress = sessionAttributes.get("ipAddress").toString();
             macAddress = sessionAttributes.get("macAddress").toString();
             deviceName = sessionAttributes.get("deviceName").toString();
+            username = sessionAttributes.get("username").toString();
 
-            log.info("Recieved heartbeat from " + ipAddress);
+            log.info(String.format("Received heartbeat from %s with device name `%s` and username `%s`", ipAddress, deviceName, username));
 
-            heartbeatService.updateDevicesState(id, ipAddress, macAddress, deviceName);
+            heartbeatService.updateOnlineStates(ipAddress, macAddress, username);
         }
     }
 
     // To send initial list of online device as immediately after user logged in
-    @SubscribeMapping(Constant.WebSocket.INITIAL_ONLINE_DEVICES)
-    public Collection<DeviceInfo> initialOnlineDevices() {
+    @SubscribeMapping(Constant.WebSocket.INITIAL_ONLINE_USERS)
+    public Collection<OnlineUserInfo> initialOnlineDevices() {
         return heartbeatService.getOnlineDevices();
     }
 }

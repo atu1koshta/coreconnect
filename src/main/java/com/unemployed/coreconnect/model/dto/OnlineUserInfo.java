@@ -2,34 +2,28 @@ package com.unemployed.coreconnect.model.dto;
 
 import com.unemployed.coreconnect.constant.Constant;
 
-public class DeviceInfo {
-	private final int id;
+public class OnlineUserInfo {
 	private final String ipAddress;
-	private final String deviceName;
+	private final String username;
 	private long lastHeartbeat;
 	private byte noHeartbeatCount;
 	private boolean isHeartbeatReceived;
 
-	public DeviceInfo(int id, String ipAddress, String deviceName, long lastHeartbeat) {
-		this.id = id;
+	public OnlineUserInfo(String ipAddress, String username, long lastHeartbeat) {
 		this.ipAddress = ipAddress;
-		this.deviceName = deviceName;
+		this.username = username;
 		this.lastHeartbeat = lastHeartbeat;
 		this.noHeartbeatCount = 0;
 		this.isHeartbeatReceived = false;
 		
 	}
 
-	public int getId() {
-		return this.id;
-	}
-
 	public String getIpAddress() {
 		return ipAddress;
 	}
 
-	public String getDeviceName() {
-		return deviceName;
+	public String getUsername() {
+		return username;
 	}
 
 	public void setLastHeartbeat(long lastHeartbeat) {
@@ -58,6 +52,6 @@ public class DeviceInfo {
 
 	@Override
 	public String toString() {
-		return "DeviceInfo{" + "ipAddress='" + ipAddress + '\'' + ", deviceName='" + deviceName + '\'' + '}';
+		return "DeviceInfo{" + "ipAddress='" + ipAddress + '\'' + ", username='" + username + '\'' + '}';
 	}
 }
